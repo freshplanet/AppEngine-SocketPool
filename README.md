@@ -20,4 +20,4 @@ You will find two modules:
 - apn.py making use of socketPool.py to implement sending notifications to Apple devices.
 
 And an modified version of the [tlslite](https://github.com/trevp/tlslite) library:
-we patched the tlslite.utils.compat.py to import sha1 and md5 from tlslite.pickable instead of relying on hashlib.
+we patched tlslite.utils.compat.py to import sha1 and md5 from tlslite.pickable instead of relying on hashlib.
