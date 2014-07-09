@@ -65,7 +65,7 @@ class APNSender(PooledConnection):
             try:
                 connection.write(msg)
             except IOError as e:
-                logging.warn("IOError %r. The socket has probably expired, we try with a new one.", e)
+                logging.warn("IOError while writing: %r. The socket has probably expired, we try with a new one.", e)
                 connection = self.getNewConnection()
                 # This time if it fails we raise the error
                 connection.write(msg)

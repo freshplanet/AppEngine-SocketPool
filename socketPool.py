@@ -187,13 +187,13 @@ class PooledConnection(object):
             try:
                 connection = yield connFut
                 if not connection:
-                    logging.debug("Create connection %s", connId)
+                    logging.debug("Create connection with id: %s", connId)
                     connection = self.getNewConnection()
                 elif connection.closed:
                     logging.debug("Closed connection found. Re-open it: %s", connId)
                     connection = self.getNewConnection()
                 else:
-                    logging.debug("Re-use connection %s", connId)
+                    logging.debug("Re-use connection with id: %s", connId)
             except Exception as e:
                 # Release the lock if we failed to retrieve or create a new connection for this slot.
                 yield ctx.memcache_delete('lock_' + connId)
