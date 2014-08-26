@@ -43,10 +43,9 @@ class APNSender(PooledConnection):
         
         """
         poolName = '%s_%s' % (certFileName, hostName)
-        path = os.path.join(os.path.dirname(__file__), "certificates", certFileName)
-        certChain, certKey = PooledConnection.getAuthFromPEM(path)
+        pemPath = os.path.join(os.path.dirname(__file__), "certificates", certFileName)
         
-        PooledConnection.__init__(self, poolName, hostName, self.GATEWAY_PORT, certChain, certKey)
+        PooledConnection.__init__(self, poolName, hostName, self.GATEWAY_PORT, pemPath=pemPath)
         
         self.requests = requests
         

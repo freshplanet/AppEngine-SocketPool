@@ -39,21 +39,20 @@ class PooledConnection(object):
     
     _SOCKET_EXPIRE = 120  # seconds. That's how long an inactive socket remains open on AppEngine
     
-    def __init__(self, poolName, host, port, certChain, privateKey):
+    def __init__(self, poolName, host, port, pemPath=None):
         """
         @param poolName: Identify the kind of connection you open.
                          We will create and manage new sockets as needed as the demand evolves.
                          Basically it should be unique per (host, port, certificate).
         @param host:
         @param port:
-        @type certChain: X509CertChain (see getAuthFromPEM to get this)
-        @type privateKey: RSAKey (see getAuthFromPEM to get this)
+        @type pemPath: Absolute path to the certificate file to use.
+                       Override 'getCertChainKey' if you need another way to retrieve your certificate information.
         """
         self.poolName = poolName
         self.host = host
         self.port = port
-        self.certChain = certChain
-        self.privateKey = privateKey
+        self._pemPath = pemPath
     
     def communicate(self, connection):
         """
@@ -95,7 +94,18 @@ class PooledConnection(object):
         
         yield self._saveConnection(connId, connection)
         raise ndb.Return(result)
-
+    
+    def getCertChainKey(self):
+        """
+        Retrieve cert chain and private key to use.
+        
+        By default we use the constructor parameter 'pemPath' and read the file.
+        Override this if you have a custom way to retrieve them.
+        
+        @rtype: tuple (X509CertChain, RSAKey)
+        """
+        return self.getAuthFromPEM(self._pemPath)
+    
     def getNewConnection(self):
         """
         Initialize a new serializable TLSConnection.
@@ -103,7 +113,8 @@ class PooledConnection(object):
         sock = socket(AF_INET, SOCK_STREAM)
         sock.connect((self.host, self.port))
         connection = TLSConnection(sock)
-        connection.handshakeClientCert(self.certChain, self.privateKey)
+        chain, key = self.getCertChainKey()
+        connection.handshakeClientCert(chain, key)
         return connection
     
     @classmethod
@@ -187,13 +198,13 @@ class PooledConnection(object):
             try:
                 connection = yield connFut
                 if not connection:
-                    logging.debug("Create connection with id: %s", connId)
+                    logging.debug("Create connection with ID %s", connId)
                     connection = self.getNewConnection()
                 elif connection.closed:
                     logging.debug("Closed connection found. Re-open it: %s", connId)
                     connection = self.getNewConnection()
                 else:
-                    logging.debug("Re-use connection with id: %s", connId)
+                    logging.debug("Re-use connection with ID %s", connId)
             except Exception as e:
                 # Release the lock if we failed to retrieve or create a new connection for this slot.
                 yield ctx.memcache_delete('lock_' + connId)
