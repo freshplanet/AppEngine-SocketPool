@@ -30,3 +30,5 @@ Join us at our new offices across from the Empire State Building on 34th and 5th
 FreshPlanet is a NYC based mobile game development firm and we are looking for senior Python engineers to join our back-end team.
 
 Work on back-end services that support mobile games entertaining millions of players around the world.
+
+Please contact Tom Cassidy (tcassidy@freshplanet.com) or apply at http://freshplanet.com/jobs/
