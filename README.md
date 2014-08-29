@@ -21,3 +21,12 @@ You will find two modules:
 
 And an modified version of the [tlslite](https://github.com/trevp/tlslite) library:
 we patched tlslite.utils.compat.py to import sha1 and md5 from tlslite.pickable instead of relying on hashlib.
+
+--
+
+**GAME DEVELOPMENT in NYC at FreshPlanet/SongPop**
+
+Join us at our new offices across from the Empire State Building on 34th and 5th Avenue.
+FreshPlanet is a NYC based mobile game development firm and we are looking for senior Python engineers to join our back-end team.
+
+Work on back-end services that support mobile games entertaining millions of players around the world.
