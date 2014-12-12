@@ -100,13 +100,14 @@ def getNotifRequest(token, message, badge=None, sound="default", context=None, h
     if sound:
         payload['aps']['sound'] = sound
     
-    # This ensures that we strip any whitespace to fit in the 256 bytes
+    # This ensures that we strip any whitespace to fit in the limited payload size
     # Also with non-ascii characters, we can use unicode formatting as it's supported by Apple => shorter
     payload = json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
     if isinstance(payload, unicode):
         payload = payload.encode('utf-8')
     
-    if len(payload) > 256:
+    # Now 2 kilobytes, was 256 bytes prior to iOS 8
+    if len(payload) > 2048:
         logging.error("The JSON generated is too large: %s", payload)
         return False
     
